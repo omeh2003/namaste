@@ -3,7 +3,6 @@ use strict;
 use SOAP::Lite;
 use LWP::Simple;
 use Crypt::SSLeay;
-use Data::Dumper;
 # Директория, где хранятся файлы с сертификатами
 $ENV{HTTPS_CA_DIR} = '/etc/ssl/direct/';                     
 # файл, содержащий сертификат пользователя
@@ -16,7 +15,9 @@ $ENV{HTTPS_CA_FILE} = $ENV{HTTPS_CA_DIR} . 'cacert.pem';
 my $client = SOAP::Lite
     -> proxy('https://soap.direct.yandex.ru/api/v4/')
     -> uri('API');
-# вызов метода (заменить на необходимый)
-my @result = $client->GetAvailableVersions();
-print Dumper(@result);
-
+# вызов метода
+my $time_zones = $client->GetTimeZones()->result;
+# Вывод массива полученных данных
+foreach my $item (@{$time_zones}){
+	print $item->{'TimeZone'} . " " . $item->{'GMTOffset'} . " " . $item->{'Name'} . "\n";
+}
